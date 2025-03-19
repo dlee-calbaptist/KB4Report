@@ -99,7 +99,7 @@ $kb4apitoken = 'knowbe4apitoken'
         $ActivityLog.Add("$(Get-TimeStamp) file not found; setting filetime to null")
     }
      if($filetime.LastWriteTime -ge $bar){
-        $ActivityLog.Add("importing data from last run. NOT using API")
+        $ActivityLog.Add("Skipping KnowBe4 API query and importing data from previous run.")
         $Exported_Campaigns=Import-Excel -path "$($reportloc)$($reportname)" -WorksheetName Campaigns
         $Exported_Users=Import-Excel -path "$($reportloc)$($reportname)" -WorksheetName Users
         $KB4_Users = $Exported_Users
@@ -107,8 +107,8 @@ $kb4apitoken = 'knowbe4apitoken'
         $KB4_Enrollments=$EENR
         }
     elseif($filetime.LastWriteTime -lt $bar){
-        $ActivityLog.Add("Updating data via knowbe4 API")
-       #region get all campaigns
+        $ActivityLog.Add("Performing KnowBe4 API Query and updating File")
+       #region Get all campaigns
             $URL='https://us.api.knowbe4.com/v1/training/campaigns/'
             $KB4_Campaigns=get-campaigns -URL $URL -kb4apitoken $kb4apitoken
             $Exported_Campaigns =New-Object System.Collections.Generic.List[System.Object]
@@ -184,7 +184,7 @@ $kb4apitoken = 'knowbe4apitoken'
             $ActivityLog.Add("$($Exported_Users.count) exported users to excel doc.")
             #endregion get active users 
 
-        #region get enrollments
+        #region Get enrollments
             $KB4_Enrollments=New-Object System.Collections.Generic.List[System.Object];
 
             $EENR = get-enrollments -kb4apitoken $kb4apitoken
